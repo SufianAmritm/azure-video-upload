@@ -29,6 +29,7 @@ export class AzureController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { folder: string },
   ) {
+    console.log('File uploaded to server: ' + new Date().toISOString());
     const { folder } = body;
     return await this.azureService.uploadVideo(file, folder);
   }
