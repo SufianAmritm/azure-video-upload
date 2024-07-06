@@ -4,6 +4,7 @@ import {
   BlockBlobUploadStreamOptions,
 } from '@azure/storage-blob';
 import { Injectable } from '@nestjs/common';
+import { MulterAzureStorage } from 'src/multer/storage';
 import { PassThrough } from 'stream';
 import * as uuid from 'uuid';
 @Injectable()
@@ -16,7 +17,7 @@ export class AzureService {
   private async getBlobServiceInstance() {
     return BlobServiceClient.fromConnectionString(this.azureConnection);
   }
-  private async getBlobClient(
+  async getBlobClient(
     imageName: string,
     folder: string,
   ): Promise<BlockBlobClient> {
@@ -65,5 +66,9 @@ export class AzureService {
       const duration = endTime.getTime() - startTime.getTime();
       console.log(`Function Execution Time: ${duration} ms`);
     }
+  }
+
+  async uploadVideoWithCustomStorage() {
+    console.log(`Uploading video`);
   }
 }
