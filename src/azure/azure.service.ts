@@ -25,7 +25,7 @@ export class AzureService {
     const containerClient = blobService.getContainerClient(folder);
     return containerClient.getBlockBlobClient(imageName);
   }
-  async uploadVideo(file: Express.Multer.File, folder: string) {
+  async uploadVideo(file: Express.Multer.File, folder: string, async: boolean) {
     const startTime = new Date();
     console.log(`Start Time: ${startTime.toISOString()}`);
     // return true;
@@ -33,7 +33,7 @@ export class AzureService {
       const size = file.size;
       const extension = file.originalname.split('.').pop();
       const fileName = `${uuid.v4()}.${extension}`;
-      const readableStream = new PassThrough();
+      const readableStream = new PassThrough({ highWaterMark: 1024000 });
       readableStream.end(file.buffer);
 
       const blockBlobClient = await this.getBlobClient(fileName, folder);
@@ -44,9 +44,9 @@ export class AzureService {
         },
       };
 
-      const data = await blockBlobClient.uploadStream(
+      const data = blockBlobClient.uploadStream(
         readableStream,
-        10000,
+        1024000,
         1000,
         {
           ...uploadOptions,
@@ -56,7 +56,8 @@ export class AzureService {
           },
         },
       );
-      return data;
+      return async
+        ? await data : data;
     } catch (err) {
       console.log(err);
     } finally {
