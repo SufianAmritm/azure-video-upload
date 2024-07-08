@@ -31,7 +31,7 @@ export class AzureController {
   async uploadVideo(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { folder: string },
-    @Query('async') async: boolean
+    @Query('async') async: string
   ) {
     console.log('File uploaded to server: ' + new Date().toISOString());
     const { folder } = body;
